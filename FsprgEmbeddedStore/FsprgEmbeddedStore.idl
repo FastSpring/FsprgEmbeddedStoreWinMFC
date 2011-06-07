@@ -1,0 +1,10 @@
+// FsprgEmbeddedStore.idl : type library source for FsprgEmbeddedStore.dll
+// This file will be processed by the MIDL compiler to produce the
+// type library (FsprgEmbeddedStore.tlb).
+
+[ uuid(4BCF0A54-06E0-4BDA-AD5D-A242883122FD), version(1.0) ]
+library FsprgEmbeddedStore
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+};

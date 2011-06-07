@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FsprgEmbeddedStore", "FsprgEmbeddedStore\FsprgEmbeddedStore.vcxproj", "{9083B29F-EADB-489F-890B-0C94A5F1B21D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestApp", "TestApp\TestApp.vcxproj", "{FA0CAFBA-7741-4638-8963-2C35F9CCE17E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9083B29F-EADB-489F-890B-0C94A5F1B21D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9083B29F-EADB-489F-890B-0C94A5F1B21D}.Debug|Win32.Build.0 = Debug|Win32
+		{9083B29F-EADB-489F-890B-0C94A5F1B21D}.Release|Win32.ActiveCfg = Release|Win32
+		{9083B29F-EADB-489F-890B-0C94A5F1B21D}.Release|Win32.Build.0 = Release|Win32
+		{FA0CAFBA-7741-4638-8963-2C35F9CCE17E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FA0CAFBA-7741-4638-8963-2C35F9CCE17E}.Debug|Win32.Build.0 = Debug|Win32
+		{FA0CAFBA-7741-4638-8963-2C35F9CCE17E}.Release|Win32.ActiveCfg = Release|Win32
+		{FA0CAFBA-7741-4638-8963-2C35F9CCE17E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

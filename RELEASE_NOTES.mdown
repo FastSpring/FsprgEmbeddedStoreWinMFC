@@ -1,0 +1,32 @@
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>Release Notes FsprgEmbeddedStoreSDK</title>
+<link rel='stylesheet' href='HOW_TO/style.css' type='text/css'/>
+</head>
+<body>
+
+<img id="logo" src="HOW_TO/fastspring_logo.png"/>
+
+<h1 id='header'>FastSpring Embedded Store SDK<br/>Release Notes</h1>
+
+# Release 1.0.1.0 #
+
+## Providing SubscriptionReference
+
+`Model::OrderItem` provides a subscriptionReference attribute if the order was a subscription. This reference can be used to make calls to FastSpring's [Subscription API](https://support.fastspring.com/entries/236487-api-subscriptions).
+
+        Model::OrderItem
+        ...
+        wstring GetSubscriptionReference()
+        ...
+
+
+
+# Release 1.0.0.0 #
+
+Port of the C# .NET implementation (Release 1.0.4.0) to a MFC C++ implementation.
+
+
+
+</body></html>

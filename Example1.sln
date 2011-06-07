@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Example1", "Example1\Example1.vcxproj", "{526F326E-9DB7-448D-BCCC-A7A4009A8FAA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FsprgEmbeddedStore", "FsprgEmbeddedStore\FsprgEmbeddedStore.vcxproj", "{9083B29F-EADB-489F-890B-0C94A5F1B21D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{526F326E-9DB7-448D-BCCC-A7A4009A8FAA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{526F326E-9DB7-448D-BCCC-A7A4009A8FAA}.Debug|Win32.Build.0 = Debug|Win32
+		{526F326E-9DB7-448D-BCCC-A7A4009A8FAA}.Release|Win32.ActiveCfg = Release|Win32
+		{526F326E-9DB7-448D-BCCC-A7A4009A8FAA}.Release|Win32.Build.0 = Release|Win32
+		{9083B29F-EADB-489F-890B-0C94A5F1B21D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9083B29F-EADB-489F-890B-0C94A5F1B21D}.Debug|Win32.Build.0 = Debug|Win32
+		{9083B29F-EADB-489F-890B-0C94A5F1B21D}.Release|Win32.ActiveCfg = Release|Win32
+		{9083B29F-EADB-489F-890B-0C94A5F1B21D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

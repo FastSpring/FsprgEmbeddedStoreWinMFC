@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Example1", "Example1\Example1.vcxproj", "{526F326E-9DB7-448D-BCCC-A7A4009A8FAA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9083B29F-EADB-489F-890B-0C94A5F1B21D} = {9083B29F-EADB-489F-890B-0C94A5F1B21D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FsprgEmbeddedStore", "FsprgEmbeddedStore\FsprgEmbeddedStore.vcxproj", "{9083B29F-EADB-489F-890B-0C94A5F1B21D}"
 EndProject

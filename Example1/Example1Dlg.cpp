@@ -133,8 +133,13 @@ BOOL CExample1Dlg::OnInitDialog()
 	_parameters.SetProductId(L"your_product");
 	_parameters.SetMode(Mode::Test);
 	wchar_t lang[LOCALE_NAME_MAX_LENGTH];
-	LCIDToLocaleName(LOCALE_NAME_USER_DEFAULT, lang, LOCALE_NAME_MAX_LENGTH, 0);
-	_parameters.SetLanguage(lang);
+	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, lang, LOCALE_NAME_MAX_LENGTH);
+	wstring isoLang = lang;
+	isoLang += L"-";
+	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, lang, LOCALE_NAME_MAX_LENGTH);
+	isoLang += lang;
+	MessageBox(isoLang.c_str());
+	_parameters.SetLanguage(isoLang);
 
 	// Get access to the IWebBrowser2 interface of the Web Browser control
 	CWnd* pControl = (CWnd*)GetDlgItem(IDC_EXPLORER1);
@@ -279,47 +284,47 @@ void CExample1Dlg::OnSize(UINT nType, int cx, int cy)
 		}
 
 		pControl->MoveWindow(wbRect);
+
+		CWnd* pReload = GetDlgItem(IDC_RELOAD_BTN);
+		CRect reloadRect;
+		pReload->GetWindowRect(reloadRect);
+		ScreenToClient(reloadRect);
+
+		reloadRect.MoveToX(cx - reloadRect.Width() - 7);
+		pReload->MoveWindow(reloadRect);
+
+		CWnd* pLink = GetDlgItem(IDC_OPEN_BROWSER);
+		CRect linkRect;
+		pLink->GetWindowRect(linkRect);
+		ScreenToClient(linkRect);
+
+		linkRect.MoveToX(reloadRect.left - linkRect.Width() - 5);
+		pLink->MoveWindow(linkRect);
+
+		CWnd *pWnd = GetDlgItem(IDC_CONFIRMATION_LABEL1);
+		CRect tmpRect;
+		pWnd->GetWindowRect(tmpRect);
+		ScreenToClient(tmpRect);
+
+		tmpRect.MoveToX(cx / 2 - tmpRect.Width() / 2);
+		pWnd->MoveWindow(tmpRect);
+
+		pWnd = GetDlgItem(IDC_CONFIRMATION_LABEL2);
+		pWnd->GetWindowRect(tmpRect);
+		ScreenToClient(tmpRect);
+
+		tmpRect.MoveToX(cx / 2 - tmpRect.Width() / 2);
+		pWnd->MoveWindow(tmpRect);
+
+		pWnd = GetDlgItem(IDC_LICENSE_BTN);
+		pWnd->GetWindowRect(tmpRect);
+		ScreenToClient(tmpRect);
+
+		tmpRect.MoveToX(cx / 2 - tmpRect.Width() / 2);
+		pWnd->MoveWindow(tmpRect);
+
+		m_OpenBrowserLink.Invalidate();
 	}
-
-	CWnd* pReload = GetDlgItem(IDC_RELOAD_BTN);
-	CRect reloadRect;
-	pReload->GetWindowRect(reloadRect);
-	ScreenToClient(reloadRect);
-
-	reloadRect.MoveToX(cx - reloadRect.Width() - 7);
-	pReload->MoveWindow(reloadRect);
-
-	CWnd* pLink = GetDlgItem(IDC_OPEN_BROWSER);
-	CRect linkRect;
-	pLink->GetWindowRect(linkRect);
-	ScreenToClient(linkRect);
-
-	linkRect.MoveToX(reloadRect.left - linkRect.Width() - 5);
-	pLink->MoveWindow(linkRect);
-
-	CWnd *pWnd = GetDlgItem(IDC_CONFIRMATION_LABEL1);
-	CRect tmpRect;
-	pWnd->GetWindowRect(tmpRect);
-	ScreenToClient(tmpRect);
-
-	tmpRect.MoveToX(cx / 2 - tmpRect.Width() / 2);
-	pWnd->MoveWindow(tmpRect);
-
-	pWnd = GetDlgItem(IDC_CONFIRMATION_LABEL2);
-	pWnd->GetWindowRect(tmpRect);
-	ScreenToClient(tmpRect);
-
-	tmpRect.MoveToX(cx / 2 - tmpRect.Width() / 2);
-	pWnd->MoveWindow(tmpRect);
-
-	pWnd = GetDlgItem(IDC_LICENSE_BTN);
-	pWnd->GetWindowRect(tmpRect);
-	ScreenToClient(tmpRect);
-
-	tmpRect.MoveToX(cx / 2 - tmpRect.Width() / 2);
-	pWnd->MoveWindow(tmpRect);
-
-	m_OpenBrowserLink.Invalidate();
 }
 
 

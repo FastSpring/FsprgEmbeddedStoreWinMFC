@@ -132,13 +132,13 @@ BOOL CExample1Dlg::OnInitDialog()
 	_parameters.SetStoreId(L"your_store");
 	_parameters.SetProductId(L"your_product");
 	_parameters.SetMode(Mode::Test);
+	// Get the current locale
 	wchar_t lang[LOCALE_NAME_MAX_LENGTH];
 	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, lang, LOCALE_NAME_MAX_LENGTH);
 	wstring isoLang = lang;
 	isoLang += L"-";
 	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, lang, LOCALE_NAME_MAX_LENGTH);
 	isoLang += lang;
-	MessageBox(isoLang.c_str());
 	_parameters.SetLanguage(isoLang);
 
 	// Get access to the IWebBrowser2 interface of the Web Browser control

@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-<title>Documentation FsprgEmbeddedStoreSDK for Windows</title>
+<title>Documentation FsprgEmbeddedStoreSDK for Windows (MFC)</title>
 <link rel='stylesheet' href='HOW_TO/style.css' type='text/css'/>
 <script src='HOW_TO/jquery-1.4.2.js'></script>
 <script src='HOW_TO/how_to.js'></script>
@@ -10,13 +10,13 @@
 
 <img id="logo" src="HOW_TO/fastspring_logo.png"/>
 
-<h1 id='header'>FastSpring Embedded Store SDK for Windows (C++)</h1>
+<h1 id='header'>FastSpring Embedded Store SDK for Windows (MFC)</h1>
 <div id='summary'></div>
 
 
 
 # Introduction #
-<span class="abstract">Introduction to FastSpring's embedded store SDK for Windows (C++).</span>
+<span class="abstract">Introduction to FastSpring's embedded store SDK for Windows (MFC).</span>
 
 FastSpring's embedded store consists of a controller with some integration points and the WebBrowser control. It's thin and very flexible and lets you integrate FastSpring the way that fits best for your application.
 
@@ -35,7 +35,7 @@ In addition, it has some integration points defined as events. It gives notifica
 
 	class Controller ...
 	{
-        	CComPtr<IWebBrowser2> GetWebView();
+		CComPtr<IWebBrowser2> GetWebView();
 		void SetWebView(CComPtr<IWebBrowser2>);
 		void SetWebView(LPDISPATCH);
 
@@ -88,7 +88,6 @@ Here's an example to show the most common case of grabbing a license number.
 	void CExample1Dlg::DidReceiveOrder(const DidReceiveOrderEventArgs &eventArgs)
 	{
 		Order *receivedOrder = eventArgs.GetOrder();
-		
 		
 		vector<OrderItem*> orderItems = _receivedOrder->GetOrderItems();
 		vector<OrderItem*>::iterator it;

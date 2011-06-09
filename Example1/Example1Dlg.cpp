@@ -330,6 +330,11 @@ void CExample1Dlg::OnSize(UINT nType, int cx, int cy)
 
 void CExample1Dlg::OnBnClickedReloadBtn()
 {
+	GetDlgItem(IDC_EXPLORER1)->ShowWindow(SW_SHOW);
+	GetDlgItem(IDC_CONFIRMATION_LABEL1)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_CONFIRMATION_LABEL2)->ShowWindow(SW_HIDE);
+	GetDlgItem(IDC_LICENSE_BTN)->ShowWindow(SW_HIDE);
+
 	_controller.LoadWithParameters(_parameters);
 }
 

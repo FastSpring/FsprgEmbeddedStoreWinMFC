@@ -12,7 +12,7 @@ namespace Utilities
 			WebBrowserHelper(void);
 			~WebBrowserHelper(void);
 
-			static void ClearCache();
+			static int ClearCache();
 			static std::wstring hexencode(const std::wstring&);
 		};
 

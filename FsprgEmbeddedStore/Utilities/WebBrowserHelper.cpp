@@ -17,7 +17,7 @@ WebBrowserHelper::~WebBrowserHelper(void)
 
 int WebBrowserHelper::ClearCache()
 {
-// Pointer to a GROUPID variable
+	// Pointer to a GROUPID variable
 	GROUPID groupId = 0;
 	
 	// Local variables
@@ -43,17 +43,14 @@ int WebBrowserHelper::ClearCache()
 	// Loop through Cache Group, and then delete entries.
 	if (enumHandle != NULL)
 	{
-		while (groupId != NULL)
+		while (1)
 		{
 			// Delete a particular Cache Group.
 			returnValue = DeleteUrlCacheGroup(groupId, CACHEGROUP_FLAG_FLUSHURL_ONDELETE, 0);
 		
-			if (!returnValue && ERROR_FILE_NOT_FOUND == GetLastError())
-			{	
-				returnValue = FindNextUrlCacheGroup(enumHandle, &groupId, 0);
-			}
-		
-			if (!returnValue && (ERROR_NO_MORE_ITEMS == GetLastError() || ERROR_FILE_NOT_FOUND == GetLastError()))
+			returnValue = FindNextUrlCacheGroup(enumHandle, &groupId, 0);
+			
+			if (!returnValue)
 			{
 				break;
 			}
@@ -70,16 +67,14 @@ int WebBrowserHelper::ClearCache()
 	enumHandle = FindFirstUrlCacheEntry(NULL, internetCacheEntry, &cacheEntryInfoBufferSizeInitial);
 	if (enumHandle != NULL)
 	{
-		while (internetCacheEntry != NULL)
+		while (1)
 		{
 			cacheEntryInfoBufferSizeInitial = cacheEntryInfoBufferSize;		
 			returnValue = DeleteUrlCacheEntry(internetCacheEntry->lpszSourceUrlName);				
 		
-			if (!returnValue)
-			{	
-				returnValue = FindNextUrlCacheEntry(enumHandle, internetCacheEntry, &cacheEntryInfoBufferSizeInitial);
-			}
-		
+			// Allows try to get the next entry
+			returnValue = FindNextUrlCacheEntry(enumHandle, internetCacheEntry, &cacheEntryInfoBufferSizeInitial);
+			
 			DWORD dwError = GetLastError();
 			if (!returnValue && ERROR_NO_MORE_ITEMS == dwError)
 			{

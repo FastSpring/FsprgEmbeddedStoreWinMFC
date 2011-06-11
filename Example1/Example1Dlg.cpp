@@ -47,11 +47,8 @@ void CExample1Dlg::DoDataExchange(CDataExchange* pDX)
 void CExample1Dlg::DidLoadStore(const DidLoadStoreEventArgs &eventArgs)
 {
 	_receivedOrder = NULL;
-	
-	GetDlgItem(IDC_EXPLORER1)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_CONFIRMATION_LABEL1)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_CONFIRMATION_LABEL2)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_LICENSE_BTN)->ShowWindow(SW_HIDE);
+
+	ShowBrowser();
 }
 
 void CExample1Dlg::DidReceiveOrder(const DidReceiveOrderEventArgs &eventArgs)
@@ -63,10 +60,7 @@ void CExample1Dlg::DidReceiveOrder(const DidReceiveOrderEventArgs &eventArgs)
 
 	UpdateData(FALSE);
 
-	GetDlgItem(IDC_EXPLORER1)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_CONFIRMATION_LABEL1)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_CONFIRMATION_LABEL2)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_LICENSE_BTN)->ShowWindow(SW_SHOW);
+	ShowConfirmation();
 }
 
 void CExample1Dlg::PropertyChanged(const PropertyChangedEventArgs &eventArgs)
@@ -182,7 +176,8 @@ BOOL CExample1Dlg::OnInitDialog()
 
 	m_OpenBrowserLink.SetURL(_parameters.ToURL().c_str());
 	
-	// load store
+	// load store. The browser control must be visible for the DocumentComplete event
+	// to be called which is required for the FsprgEmbeddedStore SDK.
 	_controller.LoadWithParameters(_parameters);
 	
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -223,7 +218,6 @@ HCURSOR CExample1Dlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
-
 
 
 void CExample1Dlg::OnBnClickedLicenseBtn()
@@ -284,6 +278,7 @@ void CExample1Dlg::OnSize(UINT nType, int cx, int cy)
 		}
 
 		pControl->MoveWindow(wbRect);
+		GetDlgItem(IDC_RELOAD_COVER)->MoveWindow(wbRect);
 
 		CWnd* pReload = GetDlgItem(IDC_RELOAD_BTN);
 		CRect reloadRect;
@@ -327,14 +322,62 @@ void CExample1Dlg::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
+void CExample1Dlg::ShowBrowser()
+{
+	CWnd *pTmp = GetDlgItem(IDC_RELOAD_COVER);
+	if (pTmp) pTmp->ShowWindow(SW_HIDE);
+	pTmp = GetDlgItem(IDC_CONFIRMATION_LABEL1);
+	if (pTmp) pTmp->ShowWindow(SW_HIDE);
+	pTmp = GetDlgItem(IDC_CONFIRMATION_LABEL2);
+	if (pTmp) pTmp->ShowWindow(SW_HIDE);
+	pTmp = GetDlgItem(IDC_LICENSE_BTN);
+	if (pTmp) pTmp->ShowWindow(SW_HIDE);
+}
+
+void CExample1Dlg::ShowConfirmation()
+{
+	BlankPage();
+
+	CWnd *pCover = GetDlgItem(IDC_RELOAD_COVER);
+	if (pCover != NULL)
+	{
+		CWnd *pTmp = GetDlgItem(IDC_CONFIRMATION_LABEL1);
+		if (pTmp)
+			pTmp->SetWindowPos(pCover, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+		pTmp = GetDlgItem(IDC_CONFIRMATION_LABEL2);
+		if (pTmp)
+			pTmp->SetWindowPos(pCover, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+		pTmp = GetDlgItem(IDC_LICENSE_BTN);
+		if (pTmp)
+			pTmp->SetWindowPos(pCover, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+	}
+}
+
+// The browser control must be visible for the DocumentComplete event
+// to be called which is required for the FsprgEmbeddedStore SDK 
+// (http://support.microsoft.com/kb/259935/en-us) This
+// method will put a static control on top of all controls in the dialog.
+void CExample1Dlg::BlankPage()
+{
+	CWnd *pControl = GetDlgItem(IDC_EXPLORER1);
+	CWnd *pTmp = GetDlgItem(IDC_RELOAD_COVER);
+	if (pControl && pTmp != NULL)
+	{
+		CRect wbRect;
+		pControl->GetWindowRect(wbRect);
+		ScreenToClient(wbRect);
+
+		pTmp->SetWindowPos(&CWnd::wndTop, wbRect.left, wbRect.top, 
+			wbRect.Width(), wbRect.Height(), SWP_SHOWWINDOW);
+	}
+}
 
 void CExample1Dlg::OnBnClickedReloadBtn()
 {
-	GetDlgItem(IDC_EXPLORER1)->ShowWindow(SW_SHOW);
-	GetDlgItem(IDC_CONFIRMATION_LABEL1)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_CONFIRMATION_LABEL2)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_LICENSE_BTN)->ShowWindow(SW_HIDE);
-
+	// The browser control must be visible for the DocumentComplete event
+	// to be called which is required for the FsprgEmbeddedStore SDK.
+	BlankPage();
+	
 	_controller.LoadWithParameters(_parameters);
 }
 
@@ -348,4 +391,30 @@ void CExample1Dlg::OnDestroy()
 	}
 
 	CDialogEx::OnDestroy();
+}
+
+
+BOOL CExample1Dlg::PreTranslateMessage(MSG* pMsg)
+{
+	// The browser control needs special message processing to
+	// allow accelerator keys to be handled when hosted in a dialog
+	if (pMsg->message == WM_KEYDOWN
+		&& (pMsg->wParam == VK_TAB || pMsg->wParam == VK_DELETE || pMsg->wParam == VK_RETURN))
+	{
+		CComPtr<IWebBrowser2> spBrowser = _controller.GetWebView();
+
+		if (spBrowser != NULL)
+		{
+			IOleInPlaceActiveObject* pIOIPAO;
+			HRESULT hr = spBrowser->QueryInterface(IID_IOleInPlaceActiveObject, (void**)&pIOIPAO);
+			if (SUCCEEDED(hr))
+			{
+				hr = pIOIPAO->TranslateAccelerator(pMsg);
+				pIOIPAO->Release();
+				return TRUE;
+			}
+		}
+	}
+
+	return CDialogEx::PreTranslateMessage(pMsg);
 }

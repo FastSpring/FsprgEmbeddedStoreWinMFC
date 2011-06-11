@@ -49,4 +49,5 @@ public:
 	void ProgressChangeExplorer1(long Progress, long ProgressMax);
 	CProgressCtrl m_browserProgress;
 	afx_msg void OnDestroy();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

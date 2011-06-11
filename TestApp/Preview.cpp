@@ -298,3 +298,29 @@ void CPreview::OnDestroy()
 
 	CPropertyPage::OnDestroy();
 }
+
+
+BOOL CPreview::PreTranslateMessage(MSG* pMsg)
+{
+	// The browser control needs special message processing to
+	// allow accelerator keys to be handled when hosted in a dialog
+	if (pMsg->message == WM_KEYDOWN && _controller != NULL
+		&& (pMsg->wParam == VK_TAB || pMsg->wParam == VK_DELETE))
+	{
+		CComPtr<IWebBrowser2> spBrowser = _controller->GetWebView();
+
+		if (spBrowser != NULL)
+		{
+			IOleInPlaceActiveObject* pIOIPAO;
+			HRESULT hr = spBrowser->QueryInterface(IID_IOleInPlaceActiveObject, (void**)&pIOIPAO);
+			if (SUCCEEDED(hr))
+			{
+				hr = pIOIPAO->TranslateAccelerator(pMsg);
+				pIOIPAO->Release();
+				return TRUE;
+			}
+		}
+	}
+
+	return CPropertyPage::PreTranslateMessage(pMsg);
+}

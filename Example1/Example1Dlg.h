@@ -35,6 +35,10 @@ private:
 	StoreParameters _parameters;
 	Order *_receivedOrder;
 
+	void ShowBrowser();
+	void ShowConfirmation();
+	void BlankPage();
+
 // Implementation
 protected:
 	HICON m_hIcon;
@@ -56,4 +60,5 @@ public:
 	CString m_confirmationLabel1;
 	CMFCLinkCtrl m_OpenBrowserLink;
 	afx_msg void OnDestroy();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

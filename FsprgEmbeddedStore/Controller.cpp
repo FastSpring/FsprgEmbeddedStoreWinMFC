@@ -38,7 +38,7 @@ void Controller::LoadWithParameters(const StoreParameters &parameters)
 {
 	if (m_spWebBrowser)
 	{
-		_storeHost.empty();
+		_storeHost.clear();
 		SetIsLoading(true);
 
 		ExpandUserAgent("FSEmbeddedStore/1.0");

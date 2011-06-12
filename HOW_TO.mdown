@@ -205,17 +205,16 @@ Example1 presents the FastSpring store in detail mode. After receiving the order
 		__hook(&Controller::DidLoadStoreEventHandler, &_controller, &CExample1Dlg::DidLoadStore);
 		__hook(&Controller::DidReceiveOrderEventHandler, &_controller, &CExample1Dlg::DidReceiveOrder);
 		__hook(&Controller::PropertyChangedEventHandler, &_controller, &CExample1Dlg::PropertyChanged);
-		}
+	}
 	
-		void CExample1Dlg::DidLoadStore(const DidLoadStoreEventArgs &eventArgs)
-		{
-			_receivedOrder = NULL;
-		}
-		
-		void CExample1Dlg::DidReceiveOrder(const DidReceiveOrderEventArgs &eventArgs)
-		{
-			_receivedOrder = eventArgs.GetOrder();
-		}
+	void CExample1Dlg::DidLoadStore(const DidLoadStoreEventArgs &eventArgs)
+	{
+		_receivedOrder = NULL;
+	}
+	
+	void CExample1Dlg::DidReceiveOrder(const DidReceiveOrderEventArgs &eventArgs)
+	{
+		_receivedOrder = eventArgs.GetOrder();
 	}
 
 

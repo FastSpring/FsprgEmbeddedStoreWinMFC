@@ -61,4 +61,7 @@ public:
 	CMFCLinkCtrl m_OpenBrowserLink;
 	afx_msg void OnDestroy();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnStnClickedOpenBrowser();
+	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 };

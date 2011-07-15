@@ -41,7 +41,6 @@ void CExample1Dlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_PROGRESS1, m_browserProgress);
 	DDX_Text(pDX, IDC_CONFIRMATION_LABEL1, m_confirmationLabel1);
-	DDX_Control(pDX, IDC_OPEN_BROWSER, m_OpenBrowserLink);
 }
 
 void CExample1Dlg::DidLoadStore(const DidLoadStoreEventArgs &eventArgs)
@@ -105,6 +104,9 @@ BEGIN_MESSAGE_MAP(CExample1Dlg, CDialogEx)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_RELOAD_BTN, &CExample1Dlg::OnBnClickedReloadBtn)
 	ON_WM_DESTROY()
+	ON_STN_CLICKED(IDC_OPEN_BROWSER, &CExample1Dlg::OnStnClickedOpenBrowser)
+	ON_WM_DRAWITEM()
+	ON_WM_SETCURSOR()
 END_MESSAGE_MAP()
 
 BEGIN_EVENTSINK_MAP(CExample1Dlg, CDialogEx)
@@ -123,8 +125,8 @@ BOOL CExample1Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	_parameters.SetOrderProcessType(OrderProcessType::Detail);
-	_parameters.SetStoreId(L"your_store");
-	_parameters.SetProductId(L"your_product");
+	_parameters.SetStoreId(L"brumple");
+	_parameters.SetProductId(L"prd1");
 	_parameters.SetMode(Mode::Test);
 	// Get the current locale
 	wchar_t lang[LOCALE_NAME_MAX_LENGTH];
@@ -174,8 +176,6 @@ BOOL CExample1Dlg::OnInitDialog()
 	__hook(&Controller::DidReceiveOrderEventHandler, &_controller, &CExample1Dlg::DidReceiveOrder);
 	__hook(&Controller::PropertyChangedEventHandler, &_controller, &CExample1Dlg::PropertyChanged);
 
-	m_OpenBrowserLink.SetURL(_parameters.ToURL().c_str());
-	
 	// load store. The browser control must be visible for the DocumentComplete event
 	// to be called which is required for the FsprgEmbeddedStore SDK.
 	_controller.LoadWithParameters(_parameters);
@@ -317,8 +317,6 @@ void CExample1Dlg::OnSize(UINT nType, int cx, int cy)
 
 		tmpRect.MoveToX(cx / 2 - tmpRect.Width() / 2);
 		pWnd->MoveWindow(tmpRect);
-
-		m_OpenBrowserLink.Invalidate();
 	}
 }
 
@@ -417,4 +415,49 @@ BOOL CExample1Dlg::PreTranslateMessage(MSG* pMsg)
 	}
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+// Need to create our own hyperlink that responds to a click to open the url in the browser
+// and will draw itself as a hyperlink and set the cursor to the hand
+void CExample1Dlg::OnStnClickedOpenBrowser()
+{
+	ShellExecuteW(NULL, L"open", _parameters.ToURL().c_str(), NULL, NULL, SW_SHOWNORMAL);
+}
+
+void CExample1Dlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
+{
+	if (nIDCtl == IDC_OPEN_BROWSER)
+	{
+		COLORREF blue = RGB(19, 100, 196);
+
+		CDC dc;
+		dc.Attach(lpDrawItemStruct->hDC);
+		dc.SetTextColor(blue);
+
+		CFont *font = dc.GetCurrentFont();
+		
+		LOGFONT lf;
+		font->GetLogFont(&lf);
+		lf.lfUnderline = 1;
+
+		CFont underlineFont;
+		underlineFont.CreateFontIndirectW(&lf);
+		dc.SelectObject(&underlineFont);
+
+		dc.TabbedTextOutW(0, 0, L"Open In Browser", 0, NULL, 0);
+	}
+
+	CDialogEx::OnDrawItem(nIDCtl, lpDrawItemStruct);
+}
+
+BOOL CExample1Dlg::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
+{
+	if (pWnd->GetDlgCtrlID() == IDC_OPEN_BROWSER)
+	{
+		HCURSOR newcursor = AfxGetApp()->LoadStandardCursor(IDC_HAND);
+		SetCursor(newcursor);
+		return TRUE;
+	}
+
+	return CDialogEx::OnSetCursor(pWnd, nHitTest, message);
 }

@@ -125,8 +125,8 @@ BOOL CExample1Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	_parameters.SetOrderProcessType(OrderProcessType::Detail);
-	_parameters.SetStoreId(L"brumple");
-	_parameters.SetProductId(L"prd1");
+	_parameters.SetStoreId(L"your_store");
+	_parameters.SetProductId(L"your_product");
 	_parameters.SetMode(Mode::Test);
 	// Get the current locale
 	wchar_t lang[LOCALE_NAME_MAX_LENGTH];

@@ -19,6 +19,20 @@ PlistDict::PlistDict(void)
 {
 }
 
+PlistDict::PlistDict(PlistDict *list)
+{
+	_dict = new DictType();
+
+	if (list->_dict != NULL)
+	{
+		DictTypeIter it;
+		for (it = list->_dict->begin(); it != list->_dict->end(); it++)
+		{
+			_dict->insert(DictTypePair(((*it).first), ((*it).second)));
+		}
+	}
+}
+
 PlistDict::PlistDict(DictType *dict) : _dict(dict)
 {
 
@@ -149,7 +163,7 @@ PlistDict* PlistDict::GetDict(wstring key)
 		{
 			if (iter->second.GetType() == DICT)
 			{
-				return (PlistDict*)iter->second.GetItem();
+				return new PlistDict((PlistDict*)iter->second.GetItem());
 			}
 		}
 	}

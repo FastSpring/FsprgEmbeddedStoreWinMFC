@@ -31,6 +31,7 @@ namespace FsprgEmbeddedStore
 		{
 		public:
 			PlistDict(void);
+			PlistDict(PlistDict*);
 			PlistDict(DictType*);
 			~PlistDict(void);
 

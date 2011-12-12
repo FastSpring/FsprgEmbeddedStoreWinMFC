@@ -5,6 +5,9 @@ using namespace FsprgEmbeddedStore::Model;
 
 Order::Order(Plist *plist) : _raw(plist)
 {
+	if (_raw == NULL) {
+		_raw = new Plist();
+	}
 }
 
 

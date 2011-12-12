@@ -23,12 +23,13 @@ PlistDict::PlistDict(PlistDict *list)
 {
 	_dict = new DictType();
 
-	if (list->_dict != NULL)
+	if (list != NULL && list->_dict != NULL)
 	{
 		DictTypeIter it;
 		for (it = list->_dict->begin(); it != list->_dict->end(); it++)
 		{
-			_dict->insert(DictTypePair(((*it).first), ((*it).second)));
+			PlistDictType type = recursiveCopy((*it).second);
+			_dict->insert(DictTypePair((*it).first, type));
 		}
 	}
 }
@@ -49,6 +50,73 @@ PlistDict::~PlistDict(void)
 		}
 
 		delete _dict;
+	}
+}
+
+PlistDictType PlistDict::recursiveCopy(PlistDictType type)
+{
+	void *ptr = type.GetItem();
+	if (ptr != NULL)
+	{
+		if (type.GetType() == INTEGER)
+		{
+			int *pInt = new int;
+			*pInt = *(int*)(type.GetItem());
+			return PlistDictType(INTEGER, pInt);
+		}
+		else if (type.GetType() == REAL)
+		{
+			float *pFloat = new float;
+			*pFloat = *(float*)(type.GetItem());
+			return PlistDictType(REAL, pFloat);
+		}
+		else if (type.GetType() == STRING)
+		{
+			wstring *pStr = new wstring(*(wstring*)type.GetItem());
+			return PlistDictType(type.GetType(), pStr);
+		}
+		else if (type.GetType() == DATE)
+		{
+			SYSTEMTIME *pSysTime = new SYSTEMTIME;
+			memcpy(pSysTime, type.GetItem(), sizeof(SYSTEMTIME));
+			return PlistDictType(DATE, pSysTime);
+		}
+		else if (type.GetType() == DATA)
+		{
+			return type;
+		}
+		else if (type.GetType() == ARRAY)
+		{
+			vector<PlistDictType> *listCpy = new vector<PlistDictType>();
+
+			vector<PlistDictType> *list = (vector<PlistDictType>*)type.GetItem();
+			if (list != NULL)
+			{
+				vector<PlistDictType>::iterator arIt;
+				for (arIt = list->begin(); arIt != list->end(); arIt++)
+				{
+					listCpy->push_back(recursiveCopy((*arIt)));
+				}
+			}
+
+			return PlistDictType(ARRAY, listCpy);
+		}
+		else if (type.GetType() == BTRUE)
+		{
+			bool *pBool = new bool;
+			*pBool = true;
+			return PlistDictType(BTRUE, pBool);
+		}
+		else if (type.GetType() == BFALSE)
+		{
+			bool *pBool = new bool;
+			*pBool = false;
+			return PlistDictType(BFALSE, pBool);
+		}
+		else if (type.GetType() == DICT)
+		{
+			return PlistDictType(DICT, new PlistDict((PlistDict*)type.GetItem()));
+		}
 	}
 }
 
@@ -163,7 +231,7 @@ PlistDict* PlistDict::GetDict(wstring key)
 		{
 			if (iter->second.GetType() == DICT)
 			{
-				return new PlistDict((PlistDict*)iter->second.GetItem());
+				return (PlistDict*)iter->second.GetItem();
 			}
 		}
 	}

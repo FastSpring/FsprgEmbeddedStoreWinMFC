@@ -3,8 +3,9 @@
 
 using namespace FsprgEmbeddedStore::Model;
 
-FsprgLicense::FsprgLicense(PlistDict *dict) : _raw(dict)
+FsprgLicense::FsprgLicense(PlistDict *dict)
 {
+	_raw = new PlistDict(dict);
 }
 
 

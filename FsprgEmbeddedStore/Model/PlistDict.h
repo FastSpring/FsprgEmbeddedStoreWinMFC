@@ -56,6 +56,7 @@ namespace FsprgEmbeddedStore
 		private:
 			DictType *_dict;
 
+			PlistDictType recursiveCopy(PlistDictType);
 			void recursiveDelete(PlistDictType);
 		};
 

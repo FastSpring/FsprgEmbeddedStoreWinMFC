@@ -3,9 +3,9 @@
 
 using namespace FsprgEmbeddedStore::Model;
 
-OrderItem::OrderItem(PlistDict *dict) : _raw(dict)
+OrderItem::OrderItem(PlistDict *dict)
 {
-	
+	_raw = new PlistDict(dict);
 }
 
 OrderItem::~OrderItem(void)

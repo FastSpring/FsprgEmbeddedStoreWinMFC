@@ -3,8 +3,9 @@
 
 using namespace FsprgEmbeddedStore::Model;
 
-FileDownload::FileDownload(PlistDict *dict) : _raw(dict)
+FileDownload::FileDownload(PlistDict *dict)
 {
+	_raw = new PlistDict(dict);
 }
 
 

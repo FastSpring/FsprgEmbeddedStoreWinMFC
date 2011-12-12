@@ -5,8 +5,9 @@
 
 using namespace FsprgEmbeddedStore::Model;
 
-Fulfillment::Fulfillment(PlistDict *dict) : _raw(dict)
+Fulfillment::Fulfillment(PlistDict *dict)
 {
+	_raw = new PlistDict(dict);
 }
 
 
@@ -27,14 +28,17 @@ void* Fulfillment::operator[](wstring key)
 {
 	PlistDict *item = _raw->GetDict(key);
 
-	wstring type = item->GetString(L"FulfillmentType", L"");
-	if (type == L"License")
+	if (item != NULL)
 	{
-		return new FsprgLicense(item);
-	}
-	if (type == L"File")
-	{
-		return new FileDownload(item);
+		wstring type = item->GetString(L"FulfillmentType", L"");
+		if (type == L"License")
+		{
+			return new FsprgLicense(item);
+		}
+		if (type == L"File")
+		{
+			return new FileDownload(item);
+		}
 	}
 
 	return item;

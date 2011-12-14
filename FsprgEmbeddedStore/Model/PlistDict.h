@@ -9,6 +9,10 @@ namespace FsprgEmbeddedStore
 {
 	namespace Model
 	{
+		struct FSDATA {
+			int length;
+			BYTE *data;
+		};
 
 		class __declspec(dllexport) PlistDictType
 		{

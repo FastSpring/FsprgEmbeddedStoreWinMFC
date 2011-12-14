@@ -212,10 +212,18 @@ PlistDictType Plist::ParseElement(CComPtr<IXMLDOMNode> spElement)
 				{
 					int length = Base64DecodeGetRequiredLength(text.length());
 					BYTE *dest = new BYTE[length];
-					char* src = CW2A(text.c_str());
-					int reqLen;
-					Base64Decode(src, text.length(), dest, &reqLen); 
-					return PlistDictType(DATA, dest);
+					CW2A src(text.c_str());
+					int reqLen = text.length();
+					Base64Decode(src, text.length(), dest, &reqLen);
+
+					FSDATA *fsdata = new FSDATA();
+					fsdata->length = reqLen;
+					fsdata->data = new BYTE[reqLen];
+					memcpy(fsdata->data, dest, reqLen);
+
+					delete [] dest;
+
+					return PlistDictType(DATA, fsdata);
 				}
 				else if (type == ARRAY)
 				{

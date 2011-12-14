@@ -83,7 +83,11 @@ PlistDictType PlistDict::recursiveCopy(PlistDictType type)
 		}
 		else if (type.GetType() == DATA)
 		{
-			return type;
+			FSDATA *fsdata = new FSDATA();
+			fsdata->length = ((FSDATA*)type.GetItem())->length;
+			fsdata->data = new BYTE[fsdata->length];
+			memcpy(fsdata->data, ((FSDATA*)type.GetItem())->data, fsdata->length);
+			return PlistDictType(DATA, fsdata);
 		}
 		else if (type.GetType() == ARRAY)
 		{
@@ -146,6 +150,11 @@ void PlistDict::recursiveDelete(PlistDictType type)
 		else if (type.GetType() == DICT)
 		{
 			delete (PlistDict*)type.GetItem();
+		}
+		else if (type.GetType() == DATA)
+		{
+			delete [] ((FSDATA*)type.GetItem())->data;
+			delete ((FSDATA*)type.GetItem());
 		}
 		else
 		{

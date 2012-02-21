@@ -1,20 +1,213 @@
-# About FastSpring #
-[FastSpring](http://www.fastspring.com) offers an innovative e-commerce engine designed to overcome ease of use, customer service, and cost issues that have plagued software e-commerce companies. We employ a customer-driven, iterative and collaborative Agile development process.
+# Introduction #
 
-# About FsprgEmbeddedStore SDK #
+[FastSpring](http://www.fastspring.com) offers an innovative e-commerce engine designed to overcome ease of use, customer service, and cost issues that have plagued software e-commerce companies.
 
 FastSpring's embedded store consists of a controller with some integration points and the WebBrowser control. It's thin and very flexible and lets you integrate FastSpring the way that fits best for your application.
 
-FastSpring provides FsprgEmbeddedStore class library's source code as VisualStudio project. It's straight forward to integrate, eases debugging and gives you a better understanding of what happens behind the scenes. The test application requires Windows XP or higher. All source code is released under the [MIT license](FsprgEmbeddedStoreWinMFC/raw/master/License.txt). It is open to contributions and its use is unrestricted.
+To get an idea of how it works the SDK provides an example and a test application. FastSpring provides FsprgEmbeddedStore class library's source code as VisualStudio project. It's straight forward to integrate, eases debugging and gives you a better understanding of what happens behind the scenes. The test application requires Windows XP or higher. All source code is released under the MIT license. It is open to contributions and its use is unrestricted.
 
-# How-to build #
 
-You can download the repository and use VisualStudio to build it. [build.sh](FsprgEmbeddedStoreWinMFC/raw/master/build.sh) packs the source code and adds a nicely formatted documentation (HOW_TO.html).
 
-Or you can download the packed SDK [here](FsprgEmbeddedStoreWinMFC/downloads) (section Download Packages) if you don't want to pack it by yourself.
+# FsprgEmbeddedStore Class Library #
 
-# How-to integrate
+The FsprgEmbeddedStore class library consists mainly out of the `FsprgEmbeddedStore::Controller`.
 
-Read our **[Integration Guide](https://support.fastspring.com/entries/234307-embedded-web-store-sdk)** to learn how to enable your store for request from FsprgEmbeddedStore.
+The `FsprgEmbeddedStore::Controller` controls the connected WebView (WebBrowser control). It provides functionality to load the store, to monitor the page loading progress and to test if the current connection is secure (https).
 
-Download or build the SDK (see "How-to build"), extract, and review the **HOW_TO.html** document. This file contains an overview of the integration process for your Windows application.
+In addition, it has some integration points defined as events. It gives notification of the initial load of the store, the subsequent page loads and of order completion.
+
+	class Controller ...
+	{
+		CComPtr<IWebBrowser2> GetWebView();
+		void SetWebView(CComPtr<IWebBrowser2>);
+		void SetWebView(LPDISPATCH);
+
+		void LoadWithParameters(const StoreParameters&);
+		void LoadWithContentsOfFile(wstring);
+		bool IsLoading();
+		bool IsSecure();
+		wstring GetStoreHost();
+
+		__event void DidLoadStoreEventHandler(const DidLoadStoreEventArgs&);
+		__event void DidLoadPageEventHandler(const DidLoadPageEventArgs&);
+		__event void DidReceiveOrderEventHandler(const DidReceiveOrderEventArgs&);
+		__event void PropertyChangedEventHandler(const PropertyChangedEventArgs&);
+	}
+
+
+## How-to embed the class library ##
+
+1. [Clone or fork](http://help.github.com/fork-a-repo) our repository.
+2. Add FsprgEmbeddedStore project to Solution (Add existing project ...)
+3. Add "FsprgEmbeddedStore" as reference (Add Reference ...) 
+4. In a dialog resource you can right click and select "Insert ActiveX Control". Select "Microsoft Web Browser" from the list.
+5. Read our [Integration Guide](https://support.fastspring.com/entries/234307-embedded-web-store-sdk) to learn how to enable your store for FsprgEmbeddedStore requests.
+6. Code dialog class. Example1 app is providing an example how to implement the dialog class in detail.
+
+
+## How-to provide a link to the web-store ##
+
+Sometimes users prefer to use a web-store instead of an embedded-store. Use `FsprgEmbeddedStore::StoreParameters` to build the web-store URL and open it inside the browser. One option is to use the CMFCLinkCtrl.
+
+	BOOL CExample1Dlg::OnInitDialog()
+	{
+	    StoreParameters parameters;
+	    parameters.SetOrderProcessType(OrderProcessType::Detail);
+	    parameters.SetStoreId(L"your_store");
+	    parameters.SetProductId(L"your_product");
+	    parameters.SetMode(Mode::Test);
+	    
+	    // openBrowser is a variable managed by MFC of type CMFCLinkCtrl
+	    openBrowser.SetURL(parameters.ToURL().c_str());
+	}
+
+
+## Order API ##
+
+The `FsprgEmbeddedStore::Model::Order` object represents the order confirmation returned via `FsprgEmbeddedStore::Controller`'s `DidReceiveOrderEventHandler`. To spare you plunging through the source files the following sections contain a real-life example and a compressed API documentation of `FsprgEmbeddedStore::Model::Order` and its referred classes.
+
+### Example ###
+
+Here's an example to show the most common case of grabbing a license number.
+
+	void CExample1Dlg::DidReceiveOrder(const DidReceiveOrderEventArgs &eventArgs)
+	{
+		Order *receivedOrder = eventArgs.GetOrder();
+		
+		vector<OrderItem*> orderItems = _receivedOrder->GetOrderItems();
+		vector<OrderItem*>::iterator it;
+		for (it = orderItems.begin(); it < orderItems.end(); it++)
+		{
+			OrderItem *item = (*it);
+			if (item->GetProductName().find(L"MyItemNamePrefix") == 0)
+			{
+				wstring name = item->GetLicense()->GetLicenseName();
+				wstring serialNumber = item->GetLicense()->GetFirstLicenseCode();
+				if (item->GetProductName().find(L"upgrade") != wstring::npos)
+				{
+					wprintf(L"Upgrade purchase:\nName: %s\nSerial #: %s", name.c_str(), serialNumber.c_str());
+				}
+				else
+				{
+					wprintf(L"Full purchase:\nName: %s\nSerial #: %s", name.c_str(), serialNumber.c_str());
+				}
+			}
+		}
+	}
+
+### FsprgEmbeddedStore::Model::Order ###
+
+	bool GetOrderIsTest();
+	wstring GetOrderReference();
+	wstring GetOrderLanguage();
+	wstring GetOrderCurrency();
+	float GetOrderTotal();
+	float GetOrderTotalUSD();
+	wstring GetCustomerFirstName();
+	wstring GetCustomerLastName();
+	wstring GetCustomerCompany();
+	wstring GetCustomerEmail();
+
+	OrderItem* GetFirstOrderItem();
+	vector<OrderItem*> GetOrderItems();
+
+### FsprgEmbeddedStore::Model::OrderItem ###
+
+	wstring GetProductName();
+	wstring GetProductDisplay();
+	float GetQuantity();
+	float GetItemTotal();
+	float GetItemTotalUSD();
+	
+	// This reference can be used to make calls to FastSpring's Subscription API.
+	// See https://support.fastspring.com/entries/236487-api-subscriptions
+	wstring GetSubscriptionReference();
+
+	Fulfillment* GetFulfullment();
+
+	// Shortcut for (FsprgLicense*)(*GetFulfullment())[wstring(L"license")]
+	FsprgLicense* GetLicense();
+
+	// Shortcut for (FileDownload*)(*GetFulfullment())[wstring(L"download")]
+	FileDownload* GetFileDownload();
+
+### FsprgEmbeddedStore::Model::Fulfillment ###
+
+	/// <summary>
+	/// Information about the fulfillment.
+	/// </summary>
+	/// <param name="key">key type of fulfillment (e.g. license, download)</param>
+	/// <returns>Specific fulfillment information (FsprgLicense, FsprgFileDownload).</returns>
+	void* operator[](wstring key);
+
+### FsprgEmbeddedStore::Model::FsprgLicense ###
+
+	wstring GetLicenseName();
+	wstring GetLicenseEmail();
+	wstring GetLicenseCompany();
+	wstring GetFirstLicenseCode();
+	vector<wstring> GetLicenseCodes();
+	PlistDict* GetLicensePropertyList();
+	wstring GetLicenseURL();
+
+### FsprgEmbeddedStore::Model::FileDownload ###
+
+	wstring GetFileURL();
+
+
+
+# Example1 #
+
+Example1 presents the FastSpring store in detail mode. After receiving the order a short thank-you-note and a button will appear. The button opens a dialog box containing license information.
+
+![Example1 Screenshot](https://github.com/FastSpring/FsprgEmbeddedStoreWinMFC/raw/master/README/example1_screenshot.png "Example1 Screenshot")
+
+
+## How-to create Example1 application ##
+
+* Attach DidLoadStoreEventHandler and DidReceiveOrderEventHandler event implementations
+* Set WebBrowser control to Controller.WebView
+* Attach PropertyChangedEventHandler to handle `IsLoading` and `IsSecure` changes 
+
+### Extract from CExample1Dlg.cpp ###
+
+	BOOL CExample1Dlg::OnInitDialog()
+	{
+		// set parameters
+		_parameters.SetStoreId(L"store_id");
+		...
+
+		// Get access to the IWebBrowser2 interface of the Web Browser control
+		CWnd* pControl = (CWnd*)GetDlgItem(IDC_EXPLORER1);
+		LPUNKNOWN pUnk = pControl->GetControlUnknown();
+		LPDISPATCH pDisp = NULL;
+		pUnk->QueryInterface(IID_IDispatch, (LPVOID*)&pDisp);
+		CComQIPtr<IWebBrowser2> spTempWebBrowser = pDisp;
+
+		// configure controller
+		_controller.SetWebView(spTempWebBrowser);
+		__hook(&Controller::DidLoadStoreEventHandler, &_controller, &CExample1Dlg::DidLoadStore);
+		__hook(&Controller::DidReceiveOrderEventHandler, &_controller, &CExample1Dlg::DidReceiveOrder);
+		__hook(&Controller::PropertyChangedEventHandler, &_controller, &CExample1Dlg::PropertyChanged);
+	}
+	
+	void CExample1Dlg::DidLoadStore(const DidLoadStoreEventArgs &eventArgs)
+	{
+		_receivedOrder = NULL;
+	}
+	
+	void CExample1Dlg::DidReceiveOrder(const DidReceiveOrderEventArgs &eventArgs)
+	{
+		_receivedOrder = eventArgs.GetOrder();
+	}
+
+
+
+# TestApp #
+
+The Test application lets you explore FastSpring's parameters and shows you the native order confirmation result (XML plist format).
+
+![TestApp Settings Screenshot](https://github.com/FastSpring/FsprgEmbeddedStoreWinMFC/raw/master/README/testapp_settings_screenshot.png "TestApp Settings Screenshot")
+![TestApp Results Screenshot](https://github.com/FastSpring/FsprgEmbeddedStoreWinMFC/raw/master/README/testapp_results_screenshot.png "TestApp Results Screenshot")
+
+You can also store that confirmation result as a plist file and load it by using the `FsprgEmbeddedStore::Controller`'s `LoadWithContentsOfFile` method. It simplifies the development and testing of the order confirmation view.

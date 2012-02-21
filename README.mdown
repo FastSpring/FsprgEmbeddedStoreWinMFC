@@ -207,7 +207,7 @@ Example1 presents the FastSpring store in detail mode. After receiving the order
 
 The Test application lets you explore FastSpring's parameters and shows you the native order confirmation result (XML plist format).
 
-![TestApp Settings Screenshot](https://github.com/FastSpring/FsprgEmbeddedStoreWinMFC/raw/master/README/testapp_settings_screenshot.png "TestApp Settings Screenshot")
+![TestApp Settings Screenshot](https://github.com/FastSpring/FsprgEmbeddedStoreWinMFC/raw/master/README/testapp_settings_screenshot.png "TestApp Settings Screenshot")&nbsp;
 ![TestApp Results Screenshot](https://github.com/FastSpring/FsprgEmbeddedStoreWinMFC/raw/master/README/testapp_results_screenshot.png "TestApp Results Screenshot")
 
 You can also store that confirmation result as a plist file and load it by using the `FsprgEmbeddedStore::Controller`'s `LoadWithContentsOfFile` method. It simplifies the development and testing of the order confirmation view.

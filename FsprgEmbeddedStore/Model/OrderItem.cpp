@@ -46,6 +46,11 @@ wstring OrderItem::GetSubscriptionReference()
 	return _raw->GetString(L"SubscriptionReference", L"");
 }
 
+wstring OrderItem::GetSubscriptionCustomerURL()
+{
+	return _raw->GetString(L"SubscriptionCustomerURL", L"");
+}
+
 Fulfillment* OrderItem::GetFulfullment()
 {
 	return new Fulfillment(_raw->GetDict(L"Fulfillment"));

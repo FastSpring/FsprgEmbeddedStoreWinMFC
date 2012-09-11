@@ -24,6 +24,9 @@ namespace FsprgEmbeddedStore
 			// This reference can be used to make calls to FastSpring's Subscription API.
 			// See https://support.fastspring.com/entries/236487-api-subscriptions
 			wstring GetSubscriptionReference();
+			
+			// This URL can be presented to the customer to manage their subscription.
+			wstring GetSubscriptionCustomerURL();
 
 			Fulfillment* GetFulfullment();
 

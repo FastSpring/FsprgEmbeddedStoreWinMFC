@@ -123,6 +123,9 @@ Here's an example to show the most common case of grabbing a license number.
 	// See https://support.fastspring.com/entries/236487-api-subscriptions
 	wstring GetSubscriptionReference();
 
+	// This URL can be presented to the customer to manage their subscription.
+	wstring GetSubscriptionCustomerURL();
+
 	Fulfillment* GetFulfullment();
 
 	// Shortcut for (FsprgLicense*)(*GetFulfullment())[wstring(L"license")]
